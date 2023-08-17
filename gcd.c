@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 
 int gcd(int n, int m)
@@ -51,6 +52,18 @@ struct gcdlcm_result euclid_gcdlcm(int n, int m)
     return r;
 }
 
+void gcdlcm(int n, int m, int *gcd, int *lcm)
+{
+    int d = euclid_gcd(n, m);
+    printf("gcd to %ld, lcm to %ld\n", gcd, lcm);
+    if (gcd) {
+        *gcd = d;
+    }
+    if (lcm) {
+        *lcm = (n/d)*m;
+    }
+}
+
 int main()
 {
     printf("gcd(%d, %d) = %d\n", 24, 54, gcd(24, 54));
@@ -96,6 +109,17 @@ int main()
     int a;
     printf("%d\n", a);
 #endif
+
+    int g;
+    int l;
+
+    printf("g@%ld, l@%ld\n", &g, &l);
+    gcdlcm(24, 54, &g, NULL);
+    printf("gcd = %d\n", g);
+    gcdlcm(24, 54, &g, &l);
+    printf("gcd = %d, lcm = %d\n", g, l);
+    gcdlcm(24, 54, NULL, &l);
+    printf("lcm = %d\n", l);
 
     return 0;
 }
