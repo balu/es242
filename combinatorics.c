@@ -24,7 +24,12 @@ void permutations(int a[], int n, int start)
         print_array(a, n);
         return;
     }
-    for (int i = start; i < n; ++i) {
+
+    // Generate all permutations with a[start] at the beginning.
+    permutations(a, n, start+1);
+
+    for (int i = start+1; i < n; ++i) {
+        // Now, bring the other elements to the front.
         swap(&a[start], &a[i]);
         permutations(a, n, start+1);
         swap(&a[start], &a[i]);
@@ -33,6 +38,6 @@ void permutations(int a[], int n, int start)
 
 int main()
 {
-    permutations((int[]){0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, 14, 0);
+    permutations((int[]){0, 1, 2, 3}, 4, 0);
     return 0;
 }
