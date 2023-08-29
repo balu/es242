@@ -1,0 +1,13 @@
+es242 $ gcc -std=gnu17 -Wall -Wpedantic -o lab1 lab1.c
+es242 $ ./lab1 
+Test extended_euclid      [OK]
+Test sieve                [OK]
+Test fib                  [FAIL]
+  - fib(9) ≠ 34.
+Test bitonic_pivot        [FAIL]
+  - Failed on example 1.
+Test next_permutation     [FAIL]
+  - Failed on <1,2,3>.
+  - Failed on <1,3,2>.
+  - Failed on <2,1,3>.
+es242 $
