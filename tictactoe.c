@@ -94,6 +94,10 @@ move_t best_move(board_t board, player_t player)
 
     // print_board(board); printf("With player %c\n", player);
 
+    assert(!is_full(board));
+    assert(!has_won(board, player));
+    assert(!has_won(board, other_player(player)));
+
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
             if (board[row][col] == '.') {
@@ -115,6 +119,19 @@ move_t best_move(board_t board, player_t player)
         for (int col = 0; col < 3; ++col) {
             if (board[row][col] == '.') {
                 board[row][col] = player;
+                /*
+                 * There is a Heisenbug here.
+                 *
+                 * We may be calling best_move() on a full board.
+                 */
+                if (is_full(board)) {
+                    board[row][col] = '.';
+                    return (move_t) {
+                        .row = row,
+                        .col = col,
+                        .score = 0
+                    };
+                }
                 response = best_move(board, other_player(player));
                 board[row][col] = '.';
                 if (response.score == -1) {
