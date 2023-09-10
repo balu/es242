@@ -2,13 +2,15 @@
 #include <stdio.h>
 #include <assert.h>
 
+#define BOARD_SIZE (3)
+
 typedef char player_t; // 'X' or 'O'
-typedef char board_t[3][3]; // 'X' or 'O' or '.'
+typedef char board_t[BOARD_SIZE][BOARD_SIZE]; // 'X' or 'O' or '.'
 
 void init_board(board_t board)
 {
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
             board[row][col] = '.';
         }
     }
@@ -16,8 +18,8 @@ void init_board(board_t board)
 
 void print_board(board_t board)
 {
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
             printf("%c ", board[row][col]);
         }
         printf("\n");
@@ -26,8 +28,8 @@ void print_board(board_t board)
 
 int is_full(board_t board)
 {
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
             if (board[row][col] == '.') { return 0; }
         }
     }
@@ -36,35 +38,36 @@ int is_full(board_t board)
 
 int has_won(board_t board, player_t player)
 {
-    for (int row = 0; row < 3; ++row) {
-        if ((board[row][0] == player) &&
-            (board[row][1] == player) &&
-            (board[row][2] == player)) {
-            return 1;
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            if (board[row][col] != player) {
+                goto next_row;
+            }
         }
+        return 1;
+    next_row:
     }
 
-    for (int col = 0; col < 3; ++col) {
-        if ((board[0][col] == player) &&
-            (board[1][col] == player) &&
-            (board[2][col] == player)) {
-            return 1;
+    for (int col = 0; col < BOARD_SIZE; ++col) {
+        for (int row = 0; row < BOARD_SIZE; ++row) {
+            if (board[row][col] != player) {
+                goto next_col;
+            }
         }
-    }
-
-    if ((board[0][0] == player) &&
-        (board[1][1] == player) &&
-        (board[2][2] == player)) {
         return 1;
+    next_col:
     }
 
-    if ((board[0][2] == player) &&
-        (board[1][1] == player) &&
-        (board[2][0] == player)) {
-        return 1;
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        if (board[i][i] != player) goto next_diagonal;
     }
+    return 1;
 
-    return 0;
+next_diagonal:
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        if (board[i][BOARD_SIZE-1-i] != player) return 0;
+    }
+    return 1;
 }
 
 player_t other_player(player_t player)
@@ -98,8 +101,8 @@ move_t best_move(board_t board, player_t player)
     assert(!has_won(board, player));
     assert(!has_won(board, other_player(player)));
 
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
             if (board[row][col] == '.') {
                 board[row][col] = player;
                 if (has_won(board, player)) {
@@ -115,8 +118,8 @@ move_t best_move(board_t board, player_t player)
         }
     }
 
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
             if (board[row][col] == '.') {
                 board[row][col] = player;
                 /*
@@ -163,6 +166,18 @@ move_t best_move(board_t board, player_t player)
     return candidate;
 }
 
+void print_key()
+{
+    int i = 0;
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            printf("%4d ", i++);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
 int main()
 {
     int move, row, col;
@@ -174,16 +189,15 @@ int main()
     while (1) {
         print_board(board); printf("\n\n");
         if (current == 'X') {
-            printf("0 1 2\n3 4 5\n6 7 8\n");
+            print_key();
             printf("Enter your move: ");
             scanf("%d", &move);
-            row = move / 3;
-            col = move % 3;
+            row = move / BOARD_SIZE;
+            col = move % BOARD_SIZE;
             assert(board[row][col] == '.');
             board[row][col] = current;
         } else {
             response = best_move(board, current);
-            // printf("Response is (%d, %d)\n", response.row, response.col);
             board[response.row][response.col] = current;
         }
         if (has_won(board, current)) {
