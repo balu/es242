@@ -20,10 +20,11 @@ void print_board(board_t board)
 {
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
-            printf("%c ", board[row][col]);
+            printf("%3c ", board[row][col]);
         }
         printf("\n");
     }
+    printf("\n");
 }
 
 int is_full(board_t board)
@@ -95,7 +96,10 @@ move_t best_move(board_t board, player_t player)
     move_t candidate;
     int no_candidate = 1;
 
-    // print_board(board); printf("With player %c\n", player);
+    printf("Analyzing board.\n");
+    printf("===============.\n");
+    print_board(board);
+    printf("===============.\n");
 
     assert(!is_full(board));
     assert(!has_won(board, player));
@@ -122,11 +126,6 @@ move_t best_move(board_t board, player_t player)
         for (int col = 0; col < BOARD_SIZE; ++col) {
             if (board[row][col] == '.') {
                 board[row][col] = player;
-                /*
-                 * There is a Heisenbug here.
-                 *
-                 * We may be calling best_move() on a full board.
-                 */
                 if (is_full(board)) {
                     board[row][col] = '.';
                     return (move_t) {
@@ -171,7 +170,7 @@ void print_key()
     int i = 0;
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
-            printf("%4d ", i++);
+            printf("%3d ", i++);
         }
         printf("\n");
     }
@@ -187,7 +186,7 @@ int main()
 
     init_board(board);
     while (1) {
-        print_board(board); printf("\n\n");
+        print_board(board);
         if (current == 'X') {
             print_key();
             printf("Enter your move: ");
