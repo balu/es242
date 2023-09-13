@@ -1,8 +1,9 @@
 /* A program to play tic-tac-toe with the computer. */
 #include <stdio.h>
+#include <stdint.h>
 #include <assert.h>
 
-#define BOARD_SIZE (3)
+#define BOARD_SIZE (4)
 
 typedef char player_t; // 'X' or 'O'
 typedef char board_t[BOARD_SIZE][BOARD_SIZE]; // 'X' or 'O' or '.'
@@ -87,6 +88,62 @@ typedef struct {
     int score;
 } move_t;
 
+#define MAX_ORD (43046720)
+
+uint8_t computed_moves[MAX_ORD+1];
+
+uint8_t encode_move(move_t m)
+{
+    uint8_t b = 0;
+
+    assert(0 <= m.row && m.row <= 3);
+    b |= m.row;
+
+    assert(0 <= m.col && m.col <= 3);
+    b |= m.col << 2;
+
+    switch (m.score) {
+    case -1: b |= 1 << 6; break;
+    case 0: b |= 1 << 5; break;
+    case 1: b |= 1 << 4; break;
+    }
+
+    return b;
+}
+
+move_t decode_move(uint8_t b)
+{
+    move_t m;
+
+    m.row = b & 0x3;
+    m.col = (b & 0xC) >> 2;
+    if (b & 0x10) m.score = 1;
+    if (b & 0x20) m.score = 0;
+    if (b & 0x40) m.score = -1;
+    return m;
+}
+
+int ord(board_t board)
+{
+    int p = 1;
+    int i = 0;
+    int d;
+
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            switch (board[row][col]) {
+            case 'X': d = 1; break;
+            case 'O': d = 2; break;
+            case '.': d = 0; break;
+            }
+            i += d * p;
+            p *= 3;
+        }
+    }
+
+    return i;
+}
+
 /*
  * board should be an unfinished game.
  */
@@ -95,11 +152,6 @@ move_t best_move(board_t board, player_t player)
     move_t response;
     move_t candidate;
     int no_candidate = 1;
-
-    printf("Analyzing board.\n");
-    printf("===============.\n");
-    print_board(board);
-    printf("===============.\n");
 
     assert(!is_full(board));
     assert(!has_won(board, player));
@@ -177,6 +229,28 @@ void print_key()
     printf("\n");
 }
 
+#if TEST
+int main()
+{
+    uint8_t b = encode_move((move_t){ .row = 2, .col = 1, .score = 0 });
+    printf("%X %d\n", b, b);
+    printf("%X\n", encode_move((move_t){ .row = 3, .col = 3, .score = -1 }));
+
+    move_t m = decode_move(b);
+    printf("row = %d, col = %d, score = %d\n", m.row, m.col, m.score);
+
+    board_t board = {
+        { 'X', 'O', '.', '.' },
+        { 'X', 'O', '.', '.' },
+        { 'X', 'O', '.', '.' },
+        { 'O', 'X', '.', '.' }
+    };
+
+    printf("%d\n", ord(board));
+
+    return 0;
+}
+#else
 int main()
 {
     int move, row, col;
@@ -213,3 +287,4 @@ int main()
 
     return 0;
 }
+#endif
