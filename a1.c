@@ -9,7 +9,12 @@
  * a[0..k-1] is the smallest selection and a[n-k..n-1] is the largest.
  */
 void generate_selections(int a[], int n, int k, int b[], void *data, void (*process_selection)(int *b, int k, void *data))
-{}
+{
+    int n;
+    scanf("%d",&n);
+    int a[n];
+
+}
 
 /*
  * See Exercise 2 (a), page 94 in Jeff Erickson's textbook.
