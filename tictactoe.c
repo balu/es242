@@ -157,17 +157,29 @@ move_t best_move(board_t board, player_t player)
     assert(!has_won(board, player));
     assert(!has_won(board, other_player(player)));
 
+    /*
+    printf("Analyzing\n");
+    print_board(board);
+    printf("====\n");
+    */
+    int o = ord(board);
+
+    if (computed_moves[o]) {
+        return decode_move(computed_moves[o]);
+    }
+
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
             if (board[row][col] == '.') {
                 board[row][col] = player;
                 if (has_won(board, player)) {
                     board[row][col] = '.';
-                    return (move_t) {
-                        row,
-                        col,
-                        1
-                    };
+                    computed_moves[o] = encode_move(candidate = (move_t) {
+                        .row = row,
+                        .col = col,
+                        .score = 1
+                        });
+                    return candidate;
                 }
                 board[row][col] = '.';
             }
@@ -180,20 +192,22 @@ move_t best_move(board_t board, player_t player)
                 board[row][col] = player;
                 if (is_full(board)) {
                     board[row][col] = '.';
-                    return (move_t) {
+                    computed_moves[o] = encode_move(candidate = (move_t) {
                         .row = row,
                         .col = col,
                         .score = 0
-                    };
+                        });
+                    return candidate;
                 }
                 response = best_move(board, other_player(player));
                 board[row][col] = '.';
                 if (response.score == -1) {
-                    return (move_t) {
+                    computed_moves[o] = encode_move(candidate = (move_t) {
                         .row = row,
                         .col = col,
                         .score = 1
-                    };
+                        });
+                    return candidate;
                 } else if (response.score == 0) {
                     candidate = (move_t) {
                         .row = row,
@@ -214,6 +228,7 @@ move_t best_move(board_t board, player_t player)
             }
         }
     }
+    computed_moves[o] = encode_move(candidate);
     return candidate;
 }
 
@@ -232,6 +247,7 @@ void print_key()
 #if TEST
 int main()
 {
+#if 0
     uint8_t b = encode_move((move_t){ .row = 2, .col = 1, .score = 0 });
     printf("%X %d\n", b, b);
     printf("%X\n", encode_move((move_t){ .row = 3, .col = 3, .score = -1 }));
@@ -247,6 +263,18 @@ int main()
     };
 
     printf("%d\n", ord(board));
+#endif
+    board_t board;
+    init_board(board);
+    best_move(board, 'X');
+
+    int count = 0;
+    for (int o = 0; o <= 66; ++o) {
+        if (computed_moves[o]) {
+            ++count;
+        }
+    }
+    printf("%d positions analyzed.\n", count);
 
     return 0;
 }
