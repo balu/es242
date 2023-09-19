@@ -1,6 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #define ANSI_COLOR_RED "\x1b[31;1m"
@@ -22,7 +23,7 @@
             fprintf(stderr, "  - %s\n", __messages[i]);       \
         }                                                     \
     } else {                                                  \
-        fprintf(stderr, "Test %-20s [%sOK%s]\n",              \
+        fprintf(stderr, "Test %-20s [%s OK %s]\n",            \
                 __name, ANSI_COLOR_GREEN, ANSI_COLOR_RESET);  \
     }                                                         \
     return __marks;                                           \
