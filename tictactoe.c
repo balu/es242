@@ -157,11 +157,6 @@ move_t best_move(board_t board, player_t player)
     assert(!has_won(board, player));
     assert(!has_won(board, other_player(player)));
 
-    /*
-    printf("Analyzing\n");
-    print_board(board);
-    printf("====\n");
-    */
     int o = ord(board);
 
     if (computed_moves[o]) {
