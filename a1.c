@@ -46,7 +46,6 @@ void generate_selections(int a[], int n, int k, int b[], int index, int j, void 
  * The dictionary parameter is an array of words, sorted in dictionary order.
  * nwords is the number of words in this dictionary.
  */
-
 void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], int sourceIndex, int bufIndex, void *data, void (*process_split)(char buf[], void *data))
 {
     if (sourceIndex == strlen(source)) {
@@ -90,6 +89,7 @@ void generate_splits(const char *source, const char *dictionary[], int nwords, c
     // strcpy(buf, "artist oil");
     // process_split(buf, data);
 }
+
 
 /*
  * Transform a[] so that it becomes the previous permutation of the elements in it.
@@ -223,7 +223,7 @@ BEGIN_TEST(generate_selections) {
 
 void test_splits_art(char buf[], void *data)
 {
-    state_t *s = (state_t*)data;
+    state_t s = (state_t)data;
     if (s->first) {
         s->err = 0;
         s->first = 0;
