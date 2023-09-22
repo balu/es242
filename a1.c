@@ -41,14 +41,48 @@ int index = 0;
  * The dictionary parameter is an array of words, sorted in dictionary order.
  * nwords is the number of words in this dictionary.
  */
-void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
+void generate_splits_recursive(const char *input_str, const char *word_list[], int num_words, char output_buf[], int input_index, int output_index, void *custom_data, void (*split_processor)(char output_buf[], void *custom_data))
 {
-    strcpy(buf, "art is toil");
-    process_split(buf, data);
-    strcpy(buf, "artist oil");
-    process_split(buf, data);
+    if (input_index == strlen(input_str)) {
+        output_buf[output_index] = '\0';
+        split_processor(output_buf, custom_data);
+        return;
+    }
+    char current_word[100];
+    int current_word_index = 0;
+    while (input_index < strlen(input_str)) {
+        current_word[current_word_index] = input_str[input_index];
+        current_word_index++;
+        input_index++;
+        current_word[current_word_index] = '\0';
+
+        int word_idx = 0;
+        while (word_idx < num_words) {
+            if (strcmp(current_word, word_list[word_idx]) == 0) {
+                strcpy(output_buf + output_index, current_word);
+                output_index += strlen(current_word);
+                if (input_index < strlen(input_str)) {
+                    output_buf[output_index] = ' ';
+                    output_index++;
+                }
+                generate_splits_recursive(input_str, word_list, num_words, output_buf, input_index, output_index, custom_data, split_processor);
+
+                output_index -= strlen(current_word);
+                if (input_index < strlen(input_str)) {
+                    output_index--;
+                }
+            }
+            word_idx++;
+        }
+    }
 }
 
+void generate_splits(const char *input_str, const char *word_list[], int num_words, char output_buf[], void *custom_data, void (*split_processor)(char output_buf[], void *custom_data))
+{
+    int input_index = 0;
+    int output_index = 0;
+    generate_splits_recursive(input_str, word_list, num_words, output_buf, input_index, output_index, custom_data, split_processor);
+}
 /*
  * Transform a[] so that it becomes the previous permutation of the elements in it.
  * If a[] is the first permutation, leave it unchanged.
