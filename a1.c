@@ -21,8 +21,9 @@ void generate_selections(int a[], int n, int k, int b[], int index, int j, void 
     for (int i = j; i < (n-k+1); i++) {
         b[index] = a[i];
         
-        generate_selections(a, n, k, b, index + 1, data, process_selection);
+        generate_selections(a, n, k-1, b, index + 1, i+1, data, process_selection);
     }
+
     // b[0] = 2; b[1] = 1;
     // process_selection(b, 2, data);
     // b[0] = 2; b[1] = 6;
@@ -205,46 +206,46 @@ BEGIN_TEST(generate_selections) {
     ASSERT_ARRAY_VALUES_EQ(s.b, 5, "Failed on last of 10C5.", 12, 4, 3, 6, 6);
 } END_TEST
 
-// void test_splits_art(char buf[], void *data)
-// {
-//     state_t *s = (state_t*)data;
-//     if (s->first) {
-//         s->err = 0;
-//         s->first = 0;
-//     }
-//     switch (s->index) {
-//     case 0:
-//         if (strcmp(buf, "art is toil")) {
-//             s->err = 1;
-//         }
-//         break;
-//     case 1:
-//         if (strcmp(buf, "artist oil")) {
-//             s->err = 1;
-//         }
-//         break;
-//     default:
-//         s->err = 1;
-//     }
-//     ++(s->index);
-// }
+void test_splits_art(char buf[], void *data)
+{
+    state_t *s = (state_t*)data;
+    if (s->first) {
+        s->err = 0;
+        s->first = 0;
+    }
+    switch (s->index) {
+    case 0:
+        if (strcmp(buf, "art is toil")) {
+            s->err = 1;
+        }
+        break;
+    case 1:
+        if (strcmp(buf, "artist oil")) {
+            s->err = 1;
+        }
+        break;
+    default:
+        s->err = 1;
+    }
+    ++(s->index);
+}
 
-// BEGIN_TEST(generate_splits) {
-//     const char *a = "artistoil";
-//     const char *dict[] = {
-//         "art",
-//         "artist",
-//         "is",
-//         "oil",
-//         "toil"
-//     };
-//     int nwords = 5;
-//     state_t s = { .index = 0, .err = 1, .first = 1 };
-//     state_t s = { .index = 0, .err = 1, .first = 1 };
-//     char buf[256];
-//     generate_splits(a, dict, nwords, buf, &s, test_splits_art);
-//     ASSERT(!s.err, "Failed on 'artistoil'.");
-// } END_TEST
+BEGIN_TEST(generate_splits) {
+    const char *a = "artistoil";
+    const char *dict[] = {
+        "art",
+        "artist",
+        "is",
+        "oil",
+        "toil"
+    };
+    int nwords = 5;
+    state_t s = { .index = 0, .err = 1, .first = 1 };
+    state_t s = { .index = 0, .err = 1, .first = 1 };
+    char buf[256];
+    generate_splits(a, dict, nwords, buf, &s, test_splits_art);
+    ASSERT(!s.err, "Failed on 'artistoil'.");
+} END_TEST
 
 BEGIN_TEST(previous_permutation) {
     int a[] = { 1, 5, 6, 2, 3, 4 };
@@ -259,7 +260,7 @@ int main()
 {
     run_tests((test_t[]) {
             TEST(generate_selections),
-            // TEST(generate_splits),
+            TEST(generate_splits),
             TEST(previous_permutation),
             0
         });
