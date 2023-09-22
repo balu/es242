@@ -12,18 +12,25 @@
  */
 void generate_selections(int a[], int n, int k, int b[], void *data, void (*process_selection)(int *b, int k, void *data))
 {
-    b[0] = 2; b[1] = 1;
-    process_selection(b, 2, data);
-    b[0] = 2; b[1] = 6;
-    process_selection(b, 2, data);
-    b[0] = 2; b[1] = 5;
-    process_selection(b, 2, data);
-    b[0] = 1; b[1] = 6;
-    process_selection(b, 2, data);
-    b[0] = 1; b[1] = 5;
-    process_selection(b, 2, data);
-    b[0] = 6; b[1] = 5;
-    process_selection(b, 2, data);
+int index = 0;
+
+    int selected[k];
+
+    void generate(int start) {
+        if (index == k) {
+
+            process_selection(selected, k, data);
+            return;
+        }
+
+        for (int i = start; i < n; ++i) {
+            selected[index++] = a[i];
+            generate(i + 1);
+            index--;
+        }
+    }
+
+    generate(0);
 }
 
 /*
