@@ -135,7 +135,7 @@ BEGIN_TEST(generate_selections) {
     int c;
     int aa[] = { 1, 5, 3, 0, 1, 12, 4, 3, 6, 6 };
     generate_selections(aa, 10, 5, b, &c, count_selections);
-    ASSERT_EQ(c, 288, "Failed on 10C5.");
+    ASSERT_EQ(c, 252, "Failed on 10C5.");
 
     selection_t s;
     generate_selections(aa, 10, 5, b, &s, last_selection);
