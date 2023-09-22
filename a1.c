@@ -177,15 +177,15 @@ BEGIN_TEST(generate_selections) {
     int a[] = { 2, 1, 6, 5 };
     int b[10];
     state_t s2165 = { .index = 0, .err = 1, .first = 1 };
-    generate_selections(a, 4, 2, b, 0, &s2165, test_selections_2165);
+    generate_selections(a, 4, 2, b, &s2165, test_selections_2165);
     ASSERT(!s2165.err, "Failed on 2 1 6 5.");
     int c = 0;
     int aa[] = { 1, 5, 3, 0, 1, 12, 4, 3, 6, 6 };
-    generate_selections(aa, 10, 5, b, 0, &c, count_selections);
+    generate_selections(aa, 10, 5, b, &c, count_selections);
     ASSERT_EQ(c, 252, "Failed on 10C5.");
 
     selection_t s;
-    generate_selections(aa, 10, 5, b, 0, &s, last_selection);
+    generate_selections(aa, 10, 5, b, &s, last_selection);
     ASSERT_ARRAY_VALUES_EQ(s.b, 5, "Failed on last of 10C5.", 12, 4, 3, 6, 6);
 } END_TEST
 
@@ -223,6 +223,7 @@ BEGIN_TEST(generate_splits) {
         "toil"
     };
     int nwords = 5;
+    state_t s = { .index = 0, .err = 1, .first = 1 };
     state_t s = { .index = 0, .err = 1, .first = 1 };
     char buf[256];
     generate_splits(a, dict, nwords, buf, &s, test_splits_art);
