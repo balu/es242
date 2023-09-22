@@ -46,30 +46,45 @@ void generate_selections(int a[], int n, int k, int b[], int index, int j, void 
  * The dictionary parameter is an array of words, sorted in dictionary order.
  * nwords is the number of words in this dictionary.
  */
-void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
+
+void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], int sourceIndex, int bufIndex, void *data, void (*process_split)(char buf[], void *data))
 {
+    if (sourceIndex == strlen(source)) {
+        buf[bufIndex] = '\0';
+        process_split(buf, data);
+        return;
+    }
 
+    char word[100]; 
+    int wordIndex;
+    wordIndex = 0; 
 
-    int source_len = strlen(source);
-    for (int i = 0; i < source_len; i++) {
-        // Iterate through the source string
-        for (int j = i + 1; j <= source_len; j++) {
-            // Check if the substring from i to j is in the dictionary
-            char substring[j - i + 1];
-            strncpy(substring, source + i, j - i);
-            substring[j - i] = '\0';
+    while (sourceIndex < strlen(source)) {
+        word[wordIndex] = source[sourceIndex];
+        wordIndex++;
+        sourceIndex++;
+        word[wordIndex] = '\0';
+        int i =0;
+        while(i<nwords) {
+            if (strcmp(word, dictionary[i]) == 0) {
+                strcpy(buf + bufIndex, word);
+                bufIndex += strlen(word);
+                if (sourceIndex < strlen(source)) {
+                    buf[bufIndex] = ' ';
+                    bufIndex++;
+                }
 
-            for (int k = 0; k < nwords; k++) {
-                if (strcmp(substring, dictionary[k]) == 0) {
-                    // Found a valid word in the dictionary, add it to buf
-                    strcpy(buf, substring);
-                    process_split(buf, data);
+                generate_splits(source, dictionary, nwords, buf, sourceIndex, bufIndex, data, process_split);
+
+                bufIndex -= strlen(word);
+                if (sourceIndex < strlen(source)) {
+                    bufIndex--;
                 }
             }
+            i++;
         }
     }
 
-    
     // strcpy(buf, "art is toil");
     // process_split(buf, data);
     // strcpy(buf, "artist oil");
@@ -241,9 +256,8 @@ BEGIN_TEST(generate_splits) {
     };
     int nwords = 5;
     state_t s = { .index = 0, .err = 1, .first = 1 };
-    state_t s = { .index = 0, .err = 1, .first = 1 };
     char buf[256];
-    generate_splits(a, dict, nwords, buf, &s, test_splits_art);
+    generate_splits(a, dict, nwords, buf, 0, 0, &s, test_splits_art);
     ASSERT(!s.err, "Failed on 'artistoil'.");
 } END_TEST
 
