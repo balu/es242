@@ -132,7 +132,7 @@ BEGIN_TEST(generate_selections) {
     state_t s2165 = { .index = 0, .err = 1, .first = 1 };
     generate_selections(a, 4, 2, b, &s2165, test_selections_2165);
     ASSERT(!s2165.err, "Failed on 2 1 6 5.");
-    int c;
+    int c = 0;
     int aa[] = { 1, 5, 3, 0, 1, 12, 4, 3, 6, 6 };
     generate_selections(aa, 10, 5, b, &c, count_selections);
     ASSERT_EQ(c, 252, "Failed on 10C5.");
