@@ -13,6 +13,8 @@ void generate_selections(int a[], int n, int k, int b[], void *data, void (*proc
     int n;
     scanf("%d",&n);
     int a[n];
+    for (int i=0; I<=n ;i++){
+        printf("%d",I);
 
 }
 
