@@ -48,12 +48,39 @@ void generate_splits(const char *source, const char *dictionary[], int nwords, c
  */
 void previous_permutation(int a[], int n)
 {
-    a[0] = 1;
-    a[1] = 5;
-    a[2] = 4;
-    a[3] = 6;
-    a[4] = 3;
-    a[5] = 2;
+    // Find the largest index i such that a[i] > a[i+1]
+    int i = n - 2;
+    while (i >= 0 && a[i] <= a[i + 1]) {
+        i--;
+    }
+
+    // If there is no such index, it means the array is the first permutation, so leave it unchanged
+    if (i == -1) {
+        return;
+    }
+
+    // Find the largest index j such that a[j] < a[i]
+    int j = n - 1;
+    while (a[j] >= a[i]) {
+        j--;
+    }
+
+    // Swap a[i] and a[j]
+    int temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+
+    // Reverse the elements from a[i+1] to the end of the array
+    int left = i + 1;
+    int right = n - 1;
+    while (left < right) {
+        int temp = a[left];
+        a[left] = a[right];
+        a[right] = temp;
+        left++;
+        right--;
+        
+    }
 }
 
 /* Write your tests here. Use the previous assignment for reference. */
