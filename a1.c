@@ -223,7 +223,7 @@ BEGIN_TEST(generate_selections) {
 
 void test_splits_art(char buf[], void *data)
 {
-    state_t s = (state_t)data;
+    state_t *s = (state_t*)data;
     if (s->first) {
         s->err = 0;
         s->first = 0;
