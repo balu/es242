@@ -11,18 +11,19 @@
  * a[0..k-1] is the smallest selection and a[n-k..n-1] is the largest.
  */
 
-void generate_selections(int a[], int n, int k, int b[], int index, void *data, void (*process_selection)(int *b, int k, void *data))
+void generate_selections(int a[], int n, int k, int b[], int index, int j, void *data, void (*process_selection)(int *b, int k, void *data))
 {
-    if (index == k) {
-        process_selection(b, k, data);
+    if (k < 1) {
+        process_selection(b, k+index, data);
         return;
     }
 
-    for (int i = 0; i < n; i++) {
+    for (int i = j; i < (n-k+1); i++) {
         b[index] = a[i];
         
-        generate_selections(a, n, k, b, index + 1, data, process_selection);
-    }
+        generate_selections(a, n, k-1, b, index + 1, i+1, data, process_selection);
+    }
+
     // b[0] = 2; b[1] = 1;
     // process_selection(b, 2, data);
     // b[0] = 2; b[1] = 6;
