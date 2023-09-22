@@ -21,8 +21,20 @@ void generate_selections(int a[], int n, int k, int b[], int index, int j, void 
     for (int i = j; i < (n-k+1); i++) {
         b[index] = a[i];
         
-        generate_selections(a, n, k-1, b, index + 1, i+1, data, process_selection);
+        generate_selections(a, n, k, b, index + 1, data, process_selection);
     }
+    // b[0] = 2; b[1] = 1;
+    // process_selection(b, 2, data);
+    // b[0] = 2; b[1] = 6;
+    // process_selection(b, 2, data);
+    // b[0] = 2; b[1] = 5;
+    // process_selection(b, 2, data);
+    // b[0] = 1; b[1] = 6;
+    // process_selection(b, 2, data);
+    // b[0] = 1; b[1] = 5;
+    // process_selection(b, 2, data);
+    // b[0] = 6; b[1] = 5;
+    // process_selection(b, 2, data);
 }
 
 /*
@@ -35,10 +47,32 @@ void generate_selections(int a[], int n, int k, int b[], int index, int j, void 
  */
 void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
 {
-    strcpy(buf, "art is toil");
-    process_split(buf, data);
-    strcpy(buf, "artist oil");
-    process_split(buf, data);
+
+
+    int source_len = strlen(source);
+    for (int i = 0; i < source_len; i++) {
+        // Iterate through the source string
+        for (int j = i + 1; j <= source_len; j++) {
+            // Check if the substring from i to j is in the dictionary
+            char substring[j - i + 1];
+            strncpy(substring, source + i, j - i);
+            substring[j - i] = '\0';
+
+            for (int k = 0; k < nwords; k++) {
+                if (strcmp(substring, dictionary[k]) == 0) {
+                    // Found a valid word in the dictionary, add it to buf
+                    strcpy(buf, substring);
+                    process_split(buf, data);
+                }
+            }
+        }
+    }
+
+    
+    // strcpy(buf, "art is toil");
+    // process_split(buf, data);
+    // strcpy(buf, "artist oil");
+    // process_split(buf, data);
 }
 
 /*
