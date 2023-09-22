@@ -4,9 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if !defined(NO_COLOR)
 #define ANSI_COLOR_RED "\x1b[31;1m"
 #define ANSI_COLOR_GREEN "\x1b[32;1m"
 #define ANSI_COLOR_RESET "\x1b[0m"
+#else
+#define ANSI_COLOR_RED ""
+#define ANSI_COLOR_GREEN ""
+#define ANSI_COLOR_RESET ""
+#endif
 #define MAX_ASSERTS (100)
 
 #define BEGIN_TEST(name) int test_##name() {      \
