@@ -47,10 +47,32 @@ void generate_selections(int a[], int n, int k, int b[], int index, void *data, 
  */
 void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
 {
-    strcpy(buf, "art is toil");
-    process_split(buf, data);
-    strcpy(buf, "artist oil");
-    process_split(buf, data);
+
+
+    int source_len = strlen(source);
+    for (int i = 0; i < source_len; i++) {
+        // Iterate through the source string
+        for (int j = i + 1; j <= source_len; j++) {
+            // Check if the substring from i to j is in the dictionary
+            char substring[j - i + 1];
+            strncpy(substring, source + i, j - i);
+            substring[j - i] = '\0';
+
+            for (int k = 0; k < nwords; k++) {
+                if (strcmp(substring, dictionary[k]) == 0) {
+                    // Found a valid word in the dictionary, add it to buf
+                    strcpy(buf, substring);
+                    process_split(buf, data);
+                }
+            }
+        }
+    }
+
+    
+    // strcpy(buf, "art is toil");
+    // process_split(buf, data);
+    // strcpy(buf, "artist oil");
+    // process_split(buf, data);
 }
 
 /*
