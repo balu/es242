@@ -1,5 +1,8 @@
 #include <cstdio>
 #include <cassert>
+#include <utility>
+
+#include "stack.hpp"
 
 typedef struct {
     int b[9][9]; // 0 is the blank cell.
@@ -54,6 +57,7 @@ int is_valid(const sudoku& s)
 sudoku place(const sudoku& s, int i, int j, int v)
 {
     sudoku t = s;
+    // printf("Placing %d at (%d, %d)\n", v, i, j);
     assert(t.b[i][j] == 0);
     t.b[i][j] = v;
     return t;
@@ -82,12 +86,54 @@ void read_board(sudoku& s)
     }
 }
 
+bool is_full(const sudoku& s)
+{
+    for (int r = 0; r < 9; ++r) {
+        for (int c = 0; c < 9; ++c) {
+            if (s.b[r][c] == 0) return false;
+        }
+    }
+    return true;
+}
+
+std::pair<int, int> find_first_blank(const sudoku& s)
+{
+    for (int r = 0; r < 9; ++r) {
+        for (int c = 0; c < 9; ++c) {
+            if (s.b[r][c] == 0) return { r, c };
+        }
+    }
+    assert(0);
+}
+
+sudoku solve(const sudoku& s)
+{
+    stack<sudoku> st;
+    push(st, s);
+    while (!is_empty(st)) {
+        sudoku v = pop(st);
+        if (is_full(v)) {
+            return v;
+        }
+        auto pos = find_first_blank(v);
+        for (int val = 1; val <= 9; ++val) {
+            sudoku u = place(v, pos.first, pos.second, val);
+            if (is_valid(u)) {
+                push(st, u);
+            }
+        }
+    }
+    assert(0);
+}
+
 int main()
 {
     sudoku s;
     read_board(s);
-    sudoku t = place(s, 0, 2, 1);
     print_board(s);
     printf("===\n");
+    sudoku t = solve(s);
     print_board(t);
+
+    return 0;
 }

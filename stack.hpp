@@ -1,15 +1,17 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
+#define MAX (2048)
+
 template<typename T>
-typedef struct {
+struct stack {
     T elements[MAX];
     int top;
 
     stack() {
-        s.top = 0;
+        top = 0;
     }
-} stack;
+};
 
 template<typename T>
 bool is_empty(stack<T>& s)
@@ -25,7 +27,7 @@ T pop(stack<T>& s)
 }
 
 template<typename T>
-void push(stack& s, T e)
+void push(stack<T>& s, T e)
 {
     s.elements[s.top++] = e;
 }
