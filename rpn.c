@@ -73,6 +73,24 @@ int main()
             left = pop(&operands);
             push(&operands, left / right);
             break;
+        case '<':
+            switch(buf[1]) {
+            case '+':
+                double sum = 0.0;
+                while (!is_empty(&operands)) {
+                    sum += pop(&operands);
+                }
+                push(&operands, sum);
+                break;
+            case '*':
+                double prod = 1.0;
+                while (!is_empty(&operands)) {
+                    prod *= pop(&operands);
+                }
+                push(&operands, prod);
+                break;
+            }
+            break;
         case 'p':
             printf("> %.2lf\n", top(&operands));
             break;
