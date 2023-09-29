@@ -10,21 +10,31 @@
  * Selections should be generated in lexicographic order.
  * a[0..k-1] is the smallest selection and a[n-k..n-1] is the largest.
  */
-void generate_selections(int a[], int n, int k, int b[], void *data, void (*process_selection)(int *b, int k, void *data))
-{
-    b[0] = 2; b[1] = 1;
-    process_selection(b, 2, data);
-    b[0] = 2; b[1] = 6;
-    process_selection(b, 2, data);
-    b[0] = 2; b[1] = 5;
-    process_selection(b, 2, data);
-    b[0] = 1; b[1] = 6;
-    process_selection(b, 2, data);
-    b[0] = 1; b[1] = 5;
-    process_selection(b, 2, data);
-    b[0] = 6; b[1] = 5;
-    process_selection(b, 2, data);
+#include <stdio.h>
+
+void process_selection(int b[], int k, void *data) {
+    for (int i = 0; i < k; i++) {
+        printf("%d ", b[i]);
+    }
+    printf("\n");
 }
+
+void generate(int a[], int n, int k, int b[], int b_Idx, int a_Idx, void *data, void (*process_selection)(int *, int, void *)) {
+    if (b_Idx == k) {
+        process_selection(b, k, data);
+        return;
+    }
+
+    for (int i = a_Idx; i < n; i++) {
+        b[b_Idx] = a[i];
+        generate(a, n, k, b, b_Idx + 1, i + 1, data, process_selection);
+    }
+}
+
+void generate_selections(int a[], int n, int k, int b[], void *data, void (*process_selection)(int *, int, void *)) {
+    generate(a, n, k, b, 0, 0, data, process_selection);
+}
+
 
 /*
  * See Exercise 2 (a), page 94 in Jeff Erickson's textbook.
