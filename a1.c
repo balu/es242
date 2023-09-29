@@ -34,13 +34,57 @@ void generate_selections(int a[], int n, int k, int b[], void *data, void (*proc
  * The dictionary parameter is an array of words, sorted in dictionary order.
  * nwords is the number of words in this dictionary.
  */
-void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
-{
-    strcpy(buf, "art is toil");
-    process_split(buf, data);
-    strcpy(buf, "artist oil");
-    process_split(buf, data);
+
+#include <stdio.h>
+#include <string.h>
+
+void splits_art(char buf[], void *data) {
+    printf("%s\n", buf);
 }
+
+void generate_splits_initial(const char *source, const char *dictionary[], int nwords, char buf[], int source_index, int buf_index, void *data, void (*splits_art)(char buf[], void *data))
+{
+    if (source_index == strlen(source)) {
+        buf[buf_index] = '\0' ;
+        splits_art(buf, data);
+        return;
+    }
+    char current_word[256];
+    int current_word_index = 0;
+    while (source_index < strlen(source)) {
+        current_word[current_word_index] = source[source_index];
+        current_word_index++;
+        source_index++;
+        current_word[current_word_index] = '\0';
+        int word_index = 0;
+        while (word_index < nwords) {
+            if (strcmp(current_word, dictionary[word_index]) == 0) {
+                strcpy(buf + buf_index, current_word);
+                buf_index += strlen(current_word);
+
+                if (source_index < strlen(source)) {
+                    buf[buf_index] = ' ';
+                    buf_index++;
+                }
+                generate_splits_initial(source, dictionary, nwords, buf, source_index, buf_index, data, splits_art);
+
+                buf_index -= strlen(current_word);
+                if (source_index < strlen(source)) {
+                    buf_index--;
+                }
+            }
+            word_index++;
+        }
+    }
+}
+
+void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*splits_art)(char buf[], void *data))
+{
+    int source_index = 0;
+    int buf_index = 0;
+    generate_splits_initial(source, dictionary, nwords, buf, source_index, buf_index, data, splits_art);
+}
+
 
 /*
  * Transform a[] so that it becomes the previous permutation of the elements in it.
