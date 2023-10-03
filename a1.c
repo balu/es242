@@ -129,11 +129,11 @@ void last_selection(int b[], int k, void *data)
 BEGIN_TEST(generate_selections) {
     int a[] = { 2, 1, 6, 5 };
     int aa[] = { 1, 5, 3, 0, 1, 12, 4, 3, 6, 6 };
-    int bb[40];
-    for (int i = 0; i < 40; ++i) {
+    int bb[24];
+    for (int i = 0; i < 24; ++i) {
         bb[i] = i;
     }
-    int b[10];
+    int b[12];
     int c = 0;
 
     state_t s2165 = { .index = 0, .err = 1, .first = 1 };
@@ -148,11 +148,11 @@ BEGIN_TEST(generate_selections) {
     ASSERT_ARRAY_VALUES_EQ(s.b, 5, "Failed on last of 10C5.", 12, 4, 3, 6, 6);
 
     c = 0;
-    generate_selections(bb, 40, 20, &c, count_selections);
-    ASSERT_EQ(c, 137846528820, "Failed on 40C20");
+    generate_selections(bb, 24, 12, b, &c, count_selections);
+    ASSERT_EQ(c, 2704156, "Failed on 24C12");
 
-    generate_selections(bb, 40, 20, &s, last_selection);
-    ASSERT_ARRAY_VALUES_EQ(s.b, 20, "Failed on last of 40C20", 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39);
+    generate_selections(bb, 24, 12, b, &s, last_selection);
+    ASSERT_ARRAY_VALUES_EQ(s.b, 12, "Failed on last of 24C12", 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
 } END_TEST
 
 void test_splits_art(char buf[], void *data)
@@ -177,6 +177,12 @@ void test_splits_art(char buf[], void *data)
         s->err = 1;
     }
     ++(s->index);
+}
+
+void count_splits(char buf[], void *data)
+{
+    int *c = (int *)data;
+    ++(*c);
 }
 
 BEGIN_TEST(generate_splits) {
@@ -206,19 +212,24 @@ BEGIN_TEST(generate_splits) {
         long_source[i] = 'a';
     }
     long_source[16000] = 0;
+    int c;
 
     generate_splits("artistoil", dict, 5, buf, &s, test_splits_art);
     ASSERT(!s.err, "Failed on \'artistoil\'.");
 
+    c = 0;
     generate_splits("aaaaaaaaaa", dict_a, 1, buf, &c, count_splits);
     ASSERT_EQ(c, 1, "Failed on \'aaaaaaaaaa\' with one split.");
 
+    c = 0;
     generate_splits("aaaaaaaaaa", dict_a, 10, buf, &c, count_splits);
     ASSERT_EQ(c, 512, "Failed on \'aaaaaaaaaa\' with binary splits.");
 
+    c = 0;
     generate_splits(long_source, dict_a, 1, buf, &c, count_splits);
     ASSERT_EQ(c, 1, "Failed on long source.");
 
+    c = 0;
     generate_splits("aaaaaaaaaa", dict_a, 2, buf, &c, count_splits);
     ASSERT_EQ(c, 89, "Failed on Fibonacci split.");
 } END_TEST
