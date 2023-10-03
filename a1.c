@@ -238,9 +238,20 @@ BEGIN_TEST(previous_permutation) {
     int a[] = { 1, 5, 6, 2, 3, 4 };
     previous_permutation(a, 6);
     ASSERT_ARRAY_VALUES_EQ(a, 6, "Failed on 1 5 6 2 3 4.", 1, 5, 4, 6, 3, 2);
+
     int aa[] = { 1, 2, 3, 5, 4, 6 };
     previous_permutation(aa, 3); // 3 is correct.
     ASSERT_ARRAY_VALUES_EQ(aa, 3, "Failed on 1 2 3.", 1, 2, 3);
+
+    previous_permutation(aa, 1);
+    ASSERT_ARRAY_VALUES_EQ(aa, 6, "Failed on aa, 1.", 1, 2, 3, 5, 4, 6);
+
+    int bb[] = { 1, 1, 1, 1 };
+    previous_permutation(bb, 4);
+    ASSERT_ARRAY_VALUES_EQ(bb, 4, "Failed on 4 1s.", 1, 1, 1, 1);
+
+    previous_permutation(aa+3, 3);
+    ASSERT_ARRAY_VALUES_EQ(aa, 6, "Failed on last part of aa.", 1, 2, 3, 4, 6, 5);
 } END_TEST
 
 int main()
