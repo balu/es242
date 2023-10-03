@@ -206,7 +206,7 @@ BEGIN_TEST(generate_splits) {
         "aaaaaaaaaa"
     };
     state_t s = { .index = 0, .err = 1, .first = 1 };
-    char buf[17000];
+    char buf[34000];
     char long_source[16000 + 1];
     for (int i = 0; i < 16000; ++i) {
         long_source[i] = 'a';
