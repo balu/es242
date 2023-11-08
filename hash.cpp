@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <cassert>
+#include <random>
 
 const char *words[] = {
     "the",
@@ -4162,6 +4163,55 @@ struct hashmap
     std::vector<hashnode<K, V>*> slots;
 };
 
+bool is_prime(u64 p)
+{
+    if (p % 2 == 0) return false;
+    for (u64 d = 3; d*d <= p; ++d) {
+        if (p % d == 0) return false;
+    }
+    return true;
+}
+
+u64 random_int(u64 start, u64 end)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(start, end);
+    return dist(gen);
+}
+
+u64 random_prime(u64 start, u64 end)
+{
+   u64 p;
+
+   while (!is_prime(p = random_int(start, end))) {}
+   return p;
+}
+
+template <typename K, typename V>
+void rehash(hashmap<K, V>& h)
+{
+    u64 p = random_prime(h.n, 2*h.n);
+    u64 a = random_int(1, p-1);
+    u64 b = random_int(0, p-1);
+    std::vector<hashnode<K, V>*> old_slots = std::move(h.slots);
+    h.slots.resize(p);
+
+    for (u64 i = 0; i < h.p; ++i) {
+        auto x = old_slots[i];
+        while (x) {
+            auto y = x->next;
+            auto new_hash = (a*ord(x->k) + b) % p;
+            x->next = h.slots[new_hash];
+            h.slots[new_hash] = x;
+            x = y;
+        }
+    }
+    h.p = p;
+    h.a = a;
+    h.b = b;
+}
+
 template <typename K, typename V>
 hashmap<K, V> empty()
 {
@@ -4186,6 +4236,10 @@ void insert(hashmap<K, V>& h, K k, V v)
     node->next = h.slots[hash];
     h.slots[hash] = node;
     ++h.n;
+
+    if (2*h.p < h.n) {
+        rehash(h);
+    }
 }
 
 template <typename K, typename V>
@@ -4257,6 +4311,12 @@ int main()
     insert(x, "abc", 34);
     print_hashmap(x);
     printf("%d\n", lookup(x, "abc"));
+
+    for (int i = 0; i < 4096; ++i) {
+        insert(x, words[i], (int)random_int(1, 100));
+    }
+
+    print_hashmap(x);
 
     return 0;
 }
