@@ -1,8 +1,14 @@
 #ifndef TEST_H
 #define TEST_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifdef __cplusplus
+#    include <cstdio>
+#    include <cstdlib>
+#    define typeof(e) std::remove_reference_t<decltype(e)>
+#else
+#    include <stdio.h>
+#    include <stdlib.h>
+#endif
 
 #if !defined(NO_COLOR)
 #define ANSI_COLOR_RED "\x1b[31;1m"
@@ -13,7 +19,7 @@
 #define ANSI_COLOR_GREEN ""
 #define ANSI_COLOR_RESET ""
 #endif
-#define MAX_ASSERTS (100)
+#define MAX_ASSERTS (1024)
 
 #define BEGIN_TEST(name) int test_##name() {      \
     const char *__name = #name;                   \
