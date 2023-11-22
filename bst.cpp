@@ -94,10 +94,56 @@ void insert(bst<K, V> &d, K key, V value)
 }
 
 template <typename K, typename V>
+bstnode<K, V> *least(bstnode<K, V>* root)
+{
+    while (root->left) { root = root->left; }
+    return root;
+}
+
+template <typename K, typename V>
+void remove(bst<K, V> &d, K key)
+{
+    auto r = search(d.root, key);
+    auto q = r.actual;
+    auto p = r.parent;
+    assert(q);
+    if (!q->left && !q->right) { // q does not have any child.
+        if (p->left == q) {
+            p->left = NULL;
+        } else if (p->right == q) {
+            p->right = NULL;
+        }
+        return;
+    }
+
+    if (!q->left || !q->right) { // q has exactly one child.
+        bstnode<K, V> *zs;
+        if (q->left) { zs = q->left; }
+        else { zs = q->right; }
+        if (p->left == q) {
+            p->left = zs;
+        } else if (p->right == q) {
+            p->right = zs;
+        }
+        return;
+    }
+
+    // q has both children.
+    auto t = least(q->right);
+    auto new_k = t->k;
+    auto new_v = t->v;
+
+    remove(d, new_k);
+
+    q->k = new_k;
+    q->v = new_v;
+}
+
+template <typename K, typename V>
 void print0(const bstnode<K, V> *p)
 {
     if (!p) return;
-    cout << p->k << ": " << p->v << ",";
+    cout << p->k << ": " << p->v << ", ";
     print0(p->left);
     print0(p->right);
 }
@@ -113,18 +159,20 @@ void print(const bst<K, V>& d)
 int main()
 {
     auto d = empty<int, int>();
-    print(d);
-    insert(d, 1, 5);
-    print(d);
-    insert(d, 1, 6);
-    print(d);
-    insert(d, 2, 7);
-    print(d);
-    insert(d, -1, 8);
+    insert(d, 15, 0);
+    insert(d, 10, 0);
+    insert(d, 9, 0);
+    insert(d, 13, 0);
+    insert(d, 30, 0);
+    insert(d, 17, 0);
+    insert(d, 25, 0);
+    insert(d, 16, 0);
+    insert(d, 18, 0);
+    insert(d, 21, 0);
     print(d);
 
-    assert(member(d, 2));
-    assert(!member(d, 3));
+    remove(d, 17);
+    print(d);
 
     return 0;
 }
